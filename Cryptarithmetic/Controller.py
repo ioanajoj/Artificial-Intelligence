@@ -13,4 +13,4 @@ class Controller:
             if new_state is not None:
                 q.append(new_state)
                 print(str(new_state) + str(len(q)))
-        print("finished?")
+        print("Couldn't find any solution")
