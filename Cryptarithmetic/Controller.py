@@ -11,6 +11,18 @@ class Controller:
             if self.__problem.check(currentState):
                 return currentState
             new_state = self.__problem.expand(currentState)
-            if new_state is not None:
-                q = q + new_state
+            q = q + new_state
+        print("Couldn't find any solution")
+
+    def greedyBfs(self, root):
+        next_configuration = [root]
+        while len(next_configuration) > 0:
+            currentState = next_configuration.pop()
+            # print(currentState)
+            if self.__problem.check(currentState):
+                return currentState
+            new_states = self.__problem.expand(currentState)
+            new_state = self.__problem.heuristic(new_states)
+            if new_state:
+                next_configuration = next_configuration + new_state
         print("Couldn't find any solution")

@@ -68,3 +68,7 @@ class Problem:
             if len(word) > 0:
                 constraints += word[0]
         return constraints
+
+    def heuristic(self, new_states):
+        new_states.sort(key=lambda x: x.get_permutation().get_partial_sum(), reverse=True)
+        return new_states

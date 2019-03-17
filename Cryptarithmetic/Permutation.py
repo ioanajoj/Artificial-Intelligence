@@ -29,3 +29,6 @@ class Permutation:
 
     def get_copy(self):
         return Permutation(self.__mapping.copy(), self.__possible_values, self.__level)
+
+    def get_partial_sum(self):
+        return sum(filter(None, self.__config))
