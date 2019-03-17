@@ -7,7 +7,7 @@ class Controller:
         q = [root]
         while len(q) > 0:
             currentState = q.pop()
-            print(currentState)
+            # print(currentState)
             if self.__problem.check(currentState):
                 return currentState
             new_state = self.__problem.expand(currentState)

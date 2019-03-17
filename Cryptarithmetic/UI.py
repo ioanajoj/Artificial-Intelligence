@@ -22,17 +22,20 @@ class UI:
         self.__pool = list(range(0, 10))
         self.__problem = None
         self.__controller = None
+        self.__text = []
 
     def printMainMenu(self):
-        s = "1 - Solve SEND + MORE = MONEY.\n"
-        s += "2 - Solve EAT + THAT = CAKE. \n"
-        s += "3 - Solve NEVER - DRIVE = RIDE. \n"
+        s = "1 - Solve " + self.__text[0] + "\n"
+        s += "2 - Solve " + self.__text[1] + "\n"
+        s += "3 - Solve " + self.__text[2] + "\n"
+        s += "4 - Solve " + self.__text[3] + "\n"
         s += "4 - Enter custom operation. \n"
         s += "5 - Change range. \n"
         print(s)
 
     def run(self):
         run_menu = True
+        self.read_from_file()
         self.printMainMenu()
         while run_menu:
             try:
@@ -40,17 +43,20 @@ class UI:
                 if command == 0:
                     run_menu = False
                 elif command == 1:
-                    text = "SEND + MORE = MONEY"
+                    text = self.__text[0]
                     self.solveWithDFS(text)
                 elif command == 2:
-                    text = "EAT + THAT = CAKE"
+                    text = self.__text[1]
                     self.solveWithDFS(text)
                 elif command == 3:
-                    text = "NEVER - DRIVE = RIDE"
+                    text = self.__text[2]
                     self.solveWithDFS(text)
                 elif command == 4:
-                    self.custom_operation()
+                    text = self.__text[3]
+                    self.solveWithDFS(text)
                 elif command == 5:
+                    self.custom_operation()
+                elif command == 6:
                     self.change_pool()
             except ValueError:
                 print("invalid command")
@@ -69,6 +75,12 @@ class UI:
     def change_pool(self):
         limit = int(input("Enter limit: "))
         self.__pool = list(range(0, limit))
+
+    def read_from_file(self):
+        with open('input_problems') as f:
+            for line in f:
+                self.__text.append(line.rstrip('\n'))
+        f.close()
 
 
 def main():
