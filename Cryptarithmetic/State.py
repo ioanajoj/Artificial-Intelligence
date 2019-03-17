@@ -8,17 +8,17 @@ class State:
             self.__mapping[key] = values[i]
             i += 1
 
-    def get_value(self, letter):
-        return self.__mapping[letter]
-
-    def get_length(self):
-        return len(self.__mapping)
-
     def is_valid(self, constraints):
         for letter in constraints:
             if self.__mapping[letter] == 0 or self.__mapping[letter] is None:
                 return False
         return len(self.__mapping.values()) == len(set(self.__mapping.values()))
+
+    def get_value(self, letter):
+        return self.__mapping[letter]
+
+    def get_length(self):
+        return len(self.__mapping)
 
     def __str__(self):
         s = ''

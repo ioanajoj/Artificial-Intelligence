@@ -9,11 +9,11 @@ class Problem:
         self.__text = text
         self.__constraints = set(self.get_constraints())
 
-        # define States
+        # define state
         self.__config = self.get_initial_dict()
         self.__current_state = State(self.__config)
 
-        # define iterators:
+        # define iterator:
         self.__pool = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
         self.__iter = iter(itertools.permutations(self.__pool, len(self.__config)))
 
@@ -22,13 +22,11 @@ class Problem:
             values = next(self.__iter, None)
             if values is not None:
                 self.__current_state.set_new_values(values)
-                print(values)
                 if self.__current_state.is_valid(self.__constraints):
                     return self.__current_state
             else:
                 break
 
-    # solve for minus
     def check(self, current_state):
         if not current_state.is_valid(self.__constraints):
             return False
@@ -38,11 +36,13 @@ class Problem:
         right_side = 0
         for word in self.__text.split(' '):
             if before_eq:
-                if word == '-':
+                if word == '+':
+                    operation = '+'
+                elif word == '-':
                     operation = '-'
                 elif word == '=':
                     before_eq = False
-                elif word != '+':
+                else:
                     if operation == '+':
                         left_side = left_side + self.get_value(word)
                     else:
@@ -54,12 +54,12 @@ class Problem:
         return False
 
     def get_value(self, word):
-        suma = 0
+        result = 0
         index = 0
         for letter in word[::-1]:
-            suma += self.__current_state.get_value(letter) * pow(10, index)
+            result += self.__current_state.get_value(letter) * pow(10, index)
             index += 1
-        return suma
+        return result
 
     def get_root(self):
         return self.__current_state
@@ -69,8 +69,7 @@ class Problem:
         return OrderedDict.fromkeys(new_text)
 
     def get_constraints(self):
-        whitelist = set('ABCDEFGHIJKLMNOPQRSTUVWXYZ ')
-        words = ''.join(filter(whitelist.__contains__, self.__text)).split(' ')
+        words = ''.join(filter(lambda ch: str.isalpha(ch) or str.isspace(ch), self.__text)).split(' ')
         constraints = ''
         for word in words:
             if len(word) > 0:

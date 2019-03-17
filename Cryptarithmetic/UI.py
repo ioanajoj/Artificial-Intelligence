@@ -38,32 +38,29 @@ class UI:
                 if command == 0:
                     run_menu = False
                 elif command == 1:
-                    self.__problem = Problem("SEND + MORE = MONEY")
-                    self.__controller = Controller(self.__problem)
-                    self.solveWithDFS()
+                    text = "SEND + MORE = MONEY"
+                    self.solveWithDFS(text)
                 elif command == 2:
-                    self.__problem = Problem("EAT + THAT = CAKE")
-                    self.__controller = Controller(self.__problem)
-                    self.solveWithDFS()
+                    text = "EAT + THAT = CAKE"
+                    self.solveWithDFS(text)
                 elif command == 3:
-                    self.__problem = Problem("NEVER - DRIVE = RIDE")
-                    self.__controller = Controller(self.__problem)
-                    self.solveWithDFS()
+                    text = "NEVER - DRIVE = RIDE"
+                    self.solveWithDFS(text)
                 elif command == 4:
                     self.custom_operation()
-            except IOError:
+            except ValueError:
                 print("invalid command")
 
-    def solveWithDFS(self):
+    def solveWithDFS(self, text):
+        self.__problem = Problem(text)
+        self.__controller = Controller(self.__problem)
         startTime = time()
         print(str(self.__controller.dfs(self.__problem.get_root())))
-        print('execution time = ', time() - startTime, " seconds")
+        print("execution time =", time() - startTime, "seconds")
 
     def custom_operation(self):
         text = input("Enter your problem: ")
-        self.__problem = Problem(text)
-        self.__controller = Controller(self.__problem)
-        self.solveWithDFS()
+        self.solveWithDFS(text)
 
 
 def main():

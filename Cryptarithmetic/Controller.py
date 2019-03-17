@@ -12,5 +12,5 @@ class Controller:
             new_state = self.__problem.expand()
             if new_state is not None:
                 q.append(new_state)
-                print(str(new_state) + str(len(q)))
+                # print(str(new_state) + str(len(q)))
         print("Couldn't find any solution")
