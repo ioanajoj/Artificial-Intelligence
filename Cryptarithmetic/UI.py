@@ -19,6 +19,7 @@ from Cryptarithmetic.Problem import Problem
 
 class UI:
     def __init__(self):
+        self.__pool = list(range(0, 10))
         self.__problem = None
         self.__controller = None
 
@@ -27,6 +28,7 @@ class UI:
         s += "2 - Solve EAT + THAT = CAKE. \n"
         s += "3 - Solve NEVER - DRIVE = RIDE. \n"
         s += "4 - Enter custom operation. \n"
+        s += "5 - Change range. \n"
         print(s)
 
     def run(self):
@@ -48,11 +50,13 @@ class UI:
                     self.solveWithDFS(text)
                 elif command == 4:
                     self.custom_operation()
+                elif command == 5:
+                    self.change_pool()
             except ValueError:
                 print("invalid command")
 
     def solveWithDFS(self, text):
-        self.__problem = Problem(text)
+        self.__problem = Problem(text, self.__pool)
         self.__controller = Controller(self.__problem)
         startTime = time()
         print(str(self.__controller.dfs(self.__problem.get_root())))
@@ -61,6 +65,10 @@ class UI:
     def custom_operation(self):
         text = input("Enter your problem: ")
         self.solveWithDFS(text)
+
+    def change_pool(self):
+        limit = int(input("Enter limit: "))
+        self.__pool = list(range(0, limit))
 
 
 def main():
