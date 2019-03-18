@@ -19,20 +19,25 @@ from Cryptarithmetic.Problem import Problem
 
 class UI:
     def __init__(self):
+        ' Range of numbers to choose from '
         self.__pool = list(range(0, 10))
-        self.__problem = None
+        ' Controller : problem'
         self.__controller = None
+        ' Problem : text, pool'
+        self.__problem = None
+        ' Text of problem '
         self.__text = []
-        self.__choice = 1
+        ' Method 0: DFS, Method 1: GreedyBFS '
+        self.__choice = 0
+        self.change_method()
 
     def printMainMenu(self):
-        s = "1 - Solve " + self.__text[0] + "\n"
-        s += "2 - Solve " + self.__text[1] + "\n"
-        s += "3 - Solve " + self.__text[2] + "\n"
-        s += "4 - Solve " + self.__text[3] + "\n"
-        s += "5 - Enter custom operation. \n"
-        s += "6 - Change method. \n"
-        s += "7 - Change range. \n"
+        s = ''
+        s += "1 - Enter custom operation. \n"
+        s += "2 - Change method. \n"
+        s += "3 - Change range. \n"
+        for i in range(len(self.__text)):
+            s += str(i+4) + " - Solve " + str(self.__text[i]) + "\n"
         print(s)
 
     def run(self):
@@ -45,23 +50,23 @@ class UI:
                 if command == 0:
                     run_menu = False
                 elif command == 1:
+                    self.custom_operation()
+                elif command == 2:
+                    self.change_method()
+                elif command == 3:
+                    self.change_pool()
+                elif command == 4:
                     text = self.__text[0]
                     self.solve(text)
-                elif command == 2:
+                elif command == 5:
                     text = self.__text[1]
                     self.solve(text)
-                elif command == 3:
+                elif command == 6:
                     text = self.__text[2]
                     self.solve(text)
-                elif command == 4:
+                elif command == 7:
                     text = self.__text[3]
                     self.solve(text)
-                elif command == 5:
-                    self.custom_operation()
-                elif command == 6:
-                    self.change_method()
-                elif command == 7:
-                    self.change_pool()
             except ValueError:
                 print("invalid command")
 
@@ -72,34 +77,62 @@ class UI:
             self.solveWithGreedy(text)
 
     def solveWithDFS(self, text):
+        """
+            Create Controller having Problem by text and solve using DFS
+            :param text: Text of the problem
+        """
+        print("DFS:")
         self.__problem = Problem(text, self.__pool)
         self.__controller = Controller(self.__problem)
-        startTime = time()
-        print(str(self.__controller.dfs(self.__problem.get_root())))
-        print("execution time =", time() - startTime, "seconds")
+        start_time = time()
+        try:
+            print(str(self.__controller.dfs(self.__problem.get_root())))
+        except Exception as ex:
+            print(ex)
+        print("execution time =", time() - start_time, "seconds")
 
     def solveWithGreedy(self, text):
+        """
+            Create Controller having Problem by text and solve using GreedyBFS
+            :param text: Text of the problem
+        """
+        print("GreedyBFS")
         self.__problem = Problem(text, self.__pool)
         self.__controller = Controller(self.__problem)
-        startTime = time()
-        print(str(self.__controller.greedyBfs(self.__problem.get_root())))
-        print("execution time =", time() - startTime, "seconds")
+        start_time = time()
+        try:
+            print(str(self.__controller.greedyBfs(self.__problem.get_root())))
+        except Exception as ex:
+            print(ex)
+        print("execution time =", time() - start_time, "seconds")
 
     def custom_operation(self):
+        """
+            Take text input of custom problem having the form A + B = C
+        """
         text = input("Enter your problem: ")
-        self.solveWithDFS(text)
+        self.solve(text)
 
     def change_pool(self):
+        """
+            Change pool of values
+        """
         limit = int(input("Enter limit: "))
         self.__pool = list(range(0, limit))
 
     def read_from_file(self):
+        """
+            Read from file
+        """
         with open('input_problems') as f:
             for line in f:
                 self.__text.append(line.rstrip('\n'))
         f.close()
 
     def change_method(self):
+        """
+            Change method for solving
+        """
         self.__choice = int(input("Enter 0 for DFS and 1 for greedyBFS: "))
 
 

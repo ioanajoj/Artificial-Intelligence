@@ -5,6 +5,10 @@ from collections import OrderedDict
 
 class Problem:
     def __init__(self, text, pool):
+        """
+        :param text: String, text of problem eq. SEND + MORE = MONEY
+        :param pool: Range of integers from which values are chosen
+        """
         self.__text = text
         self.__constraints = set(self.get_constraints())
         self.__pool = pool
@@ -12,7 +16,11 @@ class Problem:
         self.__current_state = State(self.__config)
 
     def expand(self, current_config):
-        configs = current_config.get_permutation().next_permut()
+        """
+        :param current_config: State
+        :return: [State, ..., State]: children of current_config node
+        """
+        configs = current_config.get_permutation().next_permutation()
         result = []
         for conf in configs:
             state = self.__current_state + conf
@@ -21,6 +29,10 @@ class Problem:
         return result
 
     def check(self, current_state):
+        """
+        :param current_state: State
+        :return: True if state is solution, False otherwise
+        """
         if not current_state.is_valid(self.__constraints):
             return False
         before_eq = True
@@ -46,7 +58,13 @@ class Problem:
             return True
         return False
 
-    def get_value(self, current_state, word):
+    @staticmethod
+    def get_value(current_state, word):
+        """
+        :param current_state: State
+        :param word: String
+        :return: compute value of a word given current values for letters
+        """
         result = 0
         index = 0
         for letter in word[::-1]:
@@ -55,13 +73,22 @@ class Problem:
         return result
 
     def get_root(self):
+        """
+        :return: root: State
+        """
         return self.__current_state
 
     def get_initial_dict(self):
+        """
+        :return: dictionary of keys mapped to None based on problem text
+        """
         new_text = ''.join(filter(str.isalpha, self.__text))
         return OrderedDict.fromkeys(new_text)
 
     def get_constraints(self):
+        """
+        :return: string of all words used as first letter of word
+        """
         words = ''.join(filter(lambda ch: str.isalpha(ch) or str.isspace(ch), self.__text)).split(' ')
         constraints = ''
         for word in words:
@@ -69,6 +96,10 @@ class Problem:
                 constraints += word[0]
         return constraints
 
-    def heuristic(self, new_states):
-        new_states.sort(key=lambda x: x.get_permutation().get_partial_sum(), reverse=True)
-        return new_states
+    def heuristic(self, states):
+        """
+        :param states: [State, ..., State]
+        :return: reversed sorted states
+        """
+        states.sort(key=lambda x: x.get_permutation().get_partial_sum(), reverse=True)
+        return states
