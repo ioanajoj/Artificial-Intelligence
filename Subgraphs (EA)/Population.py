@@ -1,5 +1,5 @@
 from Individual import Individual
-from random import shuffle
+from random import shuffle, randint
 
 
 class Population:
@@ -12,8 +12,7 @@ class Population:
         self.__no_individuals = no_individuals
         self.__list_individuals = []
         for i in range(self.__no_individuals):
-            values = [1 for x in range(individual_size // 2)] + \
-                     [0 for x in range(individual_size // 2)]
+            values = list(range(individual_size))
             shuffle(values)
             self.__list_individuals.append(Individual(individual_size, values))
 
@@ -23,15 +22,18 @@ class Population:
         :return: void
         """
         for individual in self.__list_individuals:
-            if individual.fitness(problem) == 0:
-                print(individual)
+            individual.fitness(problem)
 
     def selection(self):
         """
         Can have more parameters
         :return: void
         """
-        pass
+        i1 = randint(0, self.__no_individuals - 1)
+        i2 = randint(0, self.__no_individuals - 1)
+        while i1 == i2:
+            i2 = randint(0, self.__no_individuals - 1)
+        return i1, i2
 
     def getSize(self):
         return self.__no_individuals
@@ -41,3 +43,6 @@ class Population:
 
     def setIndividual(self, index, individual):
         self.__list_individuals[index] = individual
+
+    def getBest(self):
+        return min(self.__list_individuals)

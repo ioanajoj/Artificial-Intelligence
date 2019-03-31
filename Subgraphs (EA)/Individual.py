@@ -1,5 +1,9 @@
 from collections import deque
-from random import random, randint
+from random import randint
+
+from copy import copy
+
+import sys
 
 
 class Individual:
@@ -7,9 +11,11 @@ class Individual:
         """
         :param size: Integer
         :param configuration: [0,1...]
+        :param problem: GraphProblem
         """
         self.__size = size
         self.__configuration = configuration
+        self.__fitness = sys.maxsize
 
     def fitness(self, problem):
         """
@@ -17,13 +23,11 @@ class Individual:
         :param problem: Problem
         :return: Integer
         """
-        if self.__configuration.count(0) != self.__size // 2 or self.__configuration.count(1) != self.__size // 2:
-            return self.__size + 1
         subgraph1, subgraph2 = self.partition()
         graph = problem
         fit1 = self.getGraphFitness(graph, subgraph1)
         fit2 = self.getGraphFitness(graph, subgraph2)
-        return fit1 + fit2
+        self.__fitness = fit1 + fit2
 
     def getGraphFitness(self, graph, subgraph):
         """
@@ -79,13 +83,8 @@ class Individual:
         Get sets of nodes from divided subgraphs based on current configuration
         :return:
         """
-        subgraph1 = set()
-        subgraph2 = set()
-        for i in range(len(self.__configuration)):
-            if self.__configuration[i] == 0:
-                subgraph1.add(i)
-            else:
-                subgraph2.add(i)
+        subgraph1 = set(self.__configuration[:self.__size // 2])
+        subgraph2 = set(self.__configuration[self.__size // 2:])
         return subgraph1, subgraph2
 
     def mutate(self, probability):
@@ -99,11 +98,11 @@ class Individual:
         :param probability:
         :return: void
         """
-        if probability > random():
-            p = randint(0, self.__size//2)
-            rand = randint(0, 2)
-            self.__configuration[p] = rand
-            self.__configuration[self.__size - 1 - p] = int(rand-1)
+        mutated = Individual(self.__size, copy(self.__configuration))
+        p = randint(0, self.__size//2)
+        mutated.__configuration[p], mutated.__configuration[self.__size - 1 - p] = \
+            mutated.__configuration[self.__size - 1 - p], mutated.__configuration[p]
+        return mutated
 
     def crossover(self, individ, probability):
         """
@@ -112,16 +111,14 @@ class Individual:
         :param probability: float
         :return: void
         """
-        half1 = self.__configuration[:self.__size//2]
-        half2 = individ.getConfiguration()[self.__size//2:]
-        # if probability > random():
-        #     half1, half2 = half2, half1
-        child = Individual(self.__size, half1 + half2)
-        child2 = Individual(self.__size, half2 + half1)
-        return child, child2
+        child_config = [self.__configuration[pos] for pos in individ.getConfiguration()]
+        return Individual(self.__size, child_config)
 
     def getConfiguration(self):
         return self.__configuration
+
+    def __lt__(self, other):
+        return self.__fitness < other.__fitness
 
     def __str__(self):
         return str(self.__configuration)

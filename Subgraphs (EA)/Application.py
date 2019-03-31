@@ -20,6 +20,7 @@ class Application:
         algorithm = Algorithm(problem, population, file_name)
         algorithm.run()
 
+
 if __name__ == '__main__':
     app = Application()
     app.main()
