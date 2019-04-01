@@ -1,4 +1,4 @@
 population_size:40
-evaluations:5000
+evaluations:3000
 number_of_runs:1
 mutation_probability:0.01

@@ -1,5 +1,5 @@
 from Individual import Individual
-from random import shuffle, randint
+from random import shuffle, randint, random
 
 
 class Population:
@@ -27,13 +27,22 @@ class Population:
     def selection(self):
         """
         Tournament selection
-        :return: void
+        :return: two individuals having best fitness from a random sample of 10
         """
-        i1 = randint(0, self.__no_individuals - 1)
-        i2 = randint(0, self.__no_individuals - 1)
-        while i1 == i2:
-            i2 = randint(0, self.__no_individuals - 1)
-        return i1, i2
+        tournament_size = 4
+        probability = 0.6
+        staged_individuals = []
+        for i in range(tournament_size):
+            random_index = randint(0, len(self.__list_individuals) - 1)
+            staged_individuals.append(self.__list_individuals.pop(random_index))
+        if random() > probability:
+            staged_individuals = sorted(staged_individuals)
+        else:
+            staged_individuals = sorted(staged_individuals, reverse=True)
+        ind1 = staged_individuals.pop(0)
+        ind2 = staged_individuals.pop(0)
+        self.__list_individuals += staged_individuals
+        return ind1, ind2
 
     def getSize(self):
         return self.__no_individuals
@@ -61,3 +70,6 @@ class Population:
         for ind in self.__list_individuals:
             suma += ind.getFitness()
         return float(suma) / len(self.__list_individuals)
+
+    def addIndividual(self, individual):
+        self.__list_individuals.append(individual)

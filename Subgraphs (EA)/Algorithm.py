@@ -1,5 +1,3 @@
-from math import sqrt
-
 import math
 import matplotlib.pyplot as plt
 
@@ -22,6 +20,7 @@ class Algorithm:
         self.__number_of_runs = None
         self.__muation_probability = None
         self.read_paramaters(parameters_file_name)
+        self.best_solutions = []
 
     def read_paramaters(self, file_name):
         """
@@ -38,16 +37,14 @@ class Algorithm:
 
     def iteration(self, probability):
         """
-
+        Create a new generation
         :return: void
         """
         # Evaluate fitness for each individual
         self.__population.evaluate(self.__problem)
 
         # Select individuals
-        i1, i2 = self.__population.selection()
-        individual1 = self.__population.getIndividual(i1)
-        individual2 = self.__population.getIndividual(i2)
+        individual1, individual2 = self.__population.selection()
 
         # Create offspring
         child1, child2 = individual1.crossover(individual2, probability)
@@ -56,15 +53,17 @@ class Algorithm:
         child1.mutate(probability)
         child2.mutate(probability)
 
+        # Select new individuals to be inserted
         individuals = [individual1, individual2, child1, child2]
         individuals = sorted(individuals)
 
-        self.__population.setIndividual(i1, individuals[0])
-        self.__population.setIndividual(i2, individuals[1])
+        # Insert best individuals from parents and children
+        self.__population.addIndividual(individuals[0])
+        self.__population.addIndividual(individuals[1])
 
     def run(self):
         """
-
+        Perform given number of runs for populations and given number of evaluations
         :return: void
         """
         self.__problem = GraphProblem(self.__data_file_name)
@@ -74,28 +73,27 @@ class Algorithm:
             for j in range(self.__evaluations):
                 self.iteration(self.__muation_probability)
                 average_fitness = self.__population.getAverage()
-                print(average_fitness)
+                print("average fitness = " + str(average_fitness), end=", ")
                 self.__fitnesses.append(average_fitness)
+                best_solution = self.__population.getBest().getFitness()
+                print("best solution = " + str(best_solution))
+                self.best_solutions.append(best_solution)
             self.plotGeneration()
-        # self.statistics()
-
+        self.statistics()
 
     def statistics(self):
         """
-
+        Print the average and standard deviation for the best solutions found by your the algorithm
+        after 1000 evaluations of the fitness function in 30 runs, with populations of 40 individuals
         :return: void
         """
         print("Average of best solutions:", end=" ")
-        average = float(sum(self.__fitnesses)) / len(self.__fitnesses)
+        average = float(sum(self.best_solutions)) / len(self.best_solutions)
         print(average)
 
         print("Standard deviation:", end=" ")
-        sum_best = 0
-        for i in self.__fitnesses:
-            a = self.__fitnesses[i] - average
-            sum_best += a
-        sum_best = sum([pow(i - average, 2) for i in self.__fitnesses])
-        std_deviation = math.sqrt(sum_best // (len(self.__fitnesses) - 1))
+        sum_best = sum([pow(i - average, 2) for i in self.best_solutions])
+        std_deviation = math.sqrt(sum_best // (len(self.best_solutions) - 1))
         print(std_deviation)
 
     def plotGeneration(self):
