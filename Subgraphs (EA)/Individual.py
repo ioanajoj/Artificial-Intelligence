@@ -1,8 +1,6 @@
 from collections import deque
 from random import randint, random
 
-from copy import copy
-
 import sys
 
 
@@ -11,7 +9,6 @@ class Individual:
         """
         :param size: Integer
         :param configuration: [0,1...]
-        :param problem: GraphProblem
         """
         self.__size = size
         self.__configuration = configuration
@@ -99,21 +96,23 @@ class Individual:
         :return: void
         """
         if probability > random():
-            mutated = Individual(self.__size, copy(self.__configuration))
             p = randint(0, self.__size//2)
-            mutated.__configuration[p], mutated.__configuration[self.__size - 1 - p] = \
-                mutated.__configuration[self.__size - 1 - p], mutated.__configuration[p]
-            return mutated
+            self.__configuration[p], self.__configuration[self.__size - 1 - p] = \
+                self.__configuration[self.__size - 1 - p], self.__configuration[p]
 
     def crossover(self, individ, probability):
         """
-        Crossover another individual
+        Crossover another individual, combine two individuals by creating a new permutation
+        EX: A: 1 3 4 2 5
+            B: 2 3 1 5 4
+         => C: 3 4 1 5 2
         :param individ: Individual
-        :param probability: float
+        :param probability: float (???)
         :return: void
         """
-        child_config = [self.__configuration[pos] for pos in individ.getConfiguration()]
-        return Individual(self.__size, child_config)
+        child_config1 = [self.__configuration[pos] for pos in individ.getConfiguration()]
+        child_config2 = [individ.getConfiguration()[pos] for pos in self.__configuration]
+        return Individual(self.__size, child_config1), Individual(self.__size, child_config2)
 
     def getConfiguration(self):
         return self.__configuration

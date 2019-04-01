@@ -5,7 +5,7 @@ from random import shuffle, randint
 class Population:
     def __init__(self, no_individuals, individual_size):
         """
-
+        Initialize population
         :param no_individuals: Integer
         :param list_individuals: List<Individual>
         """
@@ -26,7 +26,7 @@ class Population:
 
     def selection(self):
         """
-        Can have more parameters
+        Tournament selection
         :return: void
         """
         i1 = randint(0, self.__no_individuals - 1)
@@ -52,5 +52,12 @@ class Population:
         return min(self.__list_individuals)
 
     def getFitnesses(self):
-        individuals = sorted(self.__list_individuals)
+        # individuals = sorted(self.__list_individuals)
+        individuals = self.__list_individuals
         return [i.getFitness() for i in individuals]
+
+    def getAverage(self):
+        suma = 0
+        for ind in self.__list_individuals:
+            suma += ind.getFitness()
+        return float(suma) / len(self.__list_individuals)

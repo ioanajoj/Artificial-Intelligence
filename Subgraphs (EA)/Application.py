@@ -11,7 +11,7 @@ from Algorithm import Algorithm
 
 class Application:
     def main(self):
-        file_name = "graph4.in"
+        file_name = "graph3.in"
         parameters_file_name = "parameters.in"
         algorithm = Algorithm(file_name, parameters_file_name)
         algorithm.run()

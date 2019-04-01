@@ -1,8 +1,8 @@
 class GraphProblem:
     def __init__(self, file_name):
         """
-            self.__nodes: Integer
-            self.__matrix: Matrix of 0 and 1
+        self.__nodes: Integer
+        self.__matrix: Matrix of 0 and 1
         """
         self.__nodes = 0
         self.__graph = dict()

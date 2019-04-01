@@ -14,8 +14,14 @@ class Algorithm:
         self.__population: Population
         """
         self.__data_file_name = file_name
-        self.read_paramaters(parameters_file_name)
         self.__fitnesses = []
+        self.__problem = None
+        self.__population = None
+        self.__population_size = None
+        self.__evaluations = None
+        self.__number_of_runs = None
+        self.__muation_probability = None
+        self.read_paramaters(parameters_file_name)
 
     def read_paramaters(self, file_name):
         """
@@ -35,17 +41,22 @@ class Algorithm:
 
         :return: void
         """
+        # Evaluate fitness for each individual
         self.__population.evaluate(self.__problem)
+
+        # Select individuals
         i1, i2 = self.__population.selection()
         individual1 = self.__population.getIndividual(i1)
         individual2 = self.__population.getIndividual(i2)
-        child = individual1.crossover(individual2, probability)
-        child.fitness(self.__problem)
-        mutated = child.mutate(probability)
-        individuals = [individual1, individual2, child]
-        if mutated is not None:
-            mutated.fitness(self.__problem)
-            individuals.append(mutated)
+
+        # Create offspring
+        child1, child2 = individual1.crossover(individual2, probability)
+        child1.fitness(self.__problem)
+        child2.fitness(self.__problem)
+        child1.mutate(probability)
+        child2.mutate(probability)
+
+        individuals = [individual1, individual2, child1, child2]
         individuals = sorted(individuals)
 
         self.__population.setIndividual(i1, individuals[0])
@@ -56,14 +67,18 @@ class Algorithm:
 
         :return: void
         """
+        self.__problem = GraphProblem(self.__data_file_name)
         for i in range(self.__number_of_runs):
             print("Iteration " + str(i), end=": ")
-            self.__problem = GraphProblem(self.__data_file_name)
             self.__population = Population(self.__population_size, self.__problem.getNumberOfNodes())
             for j in range(self.__evaluations):
                 self.iteration(self.__muation_probability)
-            self.__fitnesses.append(self.__population.getBest().getFitness())
-        self.statistics()
+                average_fitness = self.__population.getAverage()
+                print(average_fitness)
+                self.__fitnesses.append(average_fitness)
+            self.plotGeneration()
+        # self.statistics()
+
 
     def statistics(self):
         """
@@ -80,11 +95,11 @@ class Algorithm:
             a = self.__fitnesses[i] - average
             sum_best += a
         sum_best = sum([pow(i - average, 2) for i in self.__fitnesses])
-        # x = sum_best // len(self.__f)
         std_deviation = math.sqrt(sum_best // (len(self.__fitnesses) - 1))
         print(std_deviation)
 
-        to_plot = self.__population.getFitnesses()
+    def plotGeneration(self):
+        to_plot = self.__fitnesses
         plt.plot(to_plot)
         plt.ylabel('fitness')
         plt.xlabel('individual')
