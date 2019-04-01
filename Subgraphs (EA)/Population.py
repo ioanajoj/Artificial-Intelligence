@@ -45,4 +45,12 @@ class Population:
         self.__list_individuals[index] = individual
 
     def getBest(self):
+        """
+        Get the individual having the best fitness
+        :return: Individual
+        """
         return min(self.__list_individuals)
+
+    def getFitnesses(self):
+        individuals = sorted(self.__list_individuals)
+        return [i.getFitness() for i in individuals]

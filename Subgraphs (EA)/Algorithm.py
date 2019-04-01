@@ -1,15 +1,21 @@
-from random import randint
+from math import sqrt
+
+import math
+import matplotlib.pyplot as plt
+
+from GraphProblem import GraphProblem
+from Population import Population
 
 
 class Algorithm:
-    def __init__(self, problem, population, file_name):
+    def __init__(self, file_name, parameters_file_name):
         """
         self.__problem: Problem
         self.__population: Population
         """
-        self.__problem = problem
-        self.__population = population
-        self.read_paramaters(file_name)
+        self.__data_file_name = file_name
+        self.read_paramaters(parameters_file_name)
+        self.__fitnesses = []
 
     def read_paramaters(self, file_name):
         """
@@ -17,7 +23,12 @@ class Algorithm:
         :param file_name: String
         :return: void
         """
-        pass
+        file = open(file_name)
+        lines = file.read().split("\n")
+        self.__population_size = int(lines[0].split(":")[1])
+        self.__evaluations = int(lines[1].split(":")[1])
+        self.__number_of_runs = int(lines[2].split(":")[1])
+        self.__muation_probability = float(lines[3].split(":")[1])
 
     def iteration(self, probability):
         """
@@ -31,9 +42,12 @@ class Algorithm:
         child = individual1.crossover(individual2, probability)
         child.fitness(self.__problem)
         mutated = child.mutate(probability)
-        mutated.fitness(self.__problem)
+        individuals = [individual1, individual2, child]
+        if mutated is not None:
+            mutated.fitness(self.__problem)
+            individuals.append(mutated)
+        individuals = sorted(individuals)
 
-        individuals = sorted([individual1, individual2, child, mutated])
         self.__population.setIndividual(i1, individuals[0])
         self.__population.setIndividual(i2, individuals[1])
 
@@ -42,15 +56,36 @@ class Algorithm:
 
         :return: void
         """
-        number_iterations = 1000
-        probability_mutation = 0.01
-        for i in range(number_iterations):
-            self.iteration(probability_mutation)
-        print(self.__population.getBest())
+        for i in range(self.__number_of_runs):
+            print("Iteration " + str(i), end=": ")
+            self.__problem = GraphProblem(self.__data_file_name)
+            self.__population = Population(self.__population_size, self.__problem.getNumberOfNodes())
+            for j in range(self.__evaluations):
+                self.iteration(self.__muation_probability)
+            self.__fitnesses.append(self.__population.getBest().getFitness())
+        self.statistics()
 
     def statistics(self):
         """
 
         :return: void
         """
-        pass
+        print("Average of best solutions:", end=" ")
+        average = float(sum(self.__fitnesses)) / len(self.__fitnesses)
+        print(average)
+
+        print("Standard deviation:", end=" ")
+        sum_best = 0
+        for i in self.__fitnesses:
+            a = self.__fitnesses[i] - average
+            sum_best += a
+        sum_best = sum([pow(i - average, 2) for i in self.__fitnesses])
+        # x = sum_best // len(self.__f)
+        std_deviation = math.sqrt(sum_best // (len(self.__fitnesses) - 1))
+        print(std_deviation)
+
+        to_plot = self.__population.getFitnesses()
+        plt.plot(to_plot)
+        plt.ylabel('fitness')
+        plt.xlabel('individual')
+        plt.show()

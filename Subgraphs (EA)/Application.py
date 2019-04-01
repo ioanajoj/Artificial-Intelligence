@@ -6,18 +6,14 @@
     determined by the subsets of nodes should be a path (both subgraphs are conex).
 """
 
-from GraphProblem import GraphProblem
-from Population import Population
 from Algorithm import Algorithm
 
 
 class Application:
     def main(self):
-        file_name = "graph2.in"
-        population_size = 100
-        problem = GraphProblem(file_name)
-        population = Population(population_size, problem.getNumberOfNodes())
-        algorithm = Algorithm(problem, population, file_name)
+        file_name = "graph4.in"
+        parameters_file_name = "parameters.in"
+        algorithm = Algorithm(file_name, parameters_file_name)
         algorithm.run()
 
 

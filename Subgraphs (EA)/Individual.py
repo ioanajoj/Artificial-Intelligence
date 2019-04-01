@@ -1,5 +1,5 @@
 from collections import deque
-from random import randint
+from random import randint, random
 
 from copy import copy
 
@@ -98,11 +98,12 @@ class Individual:
         :param probability:
         :return: void
         """
-        mutated = Individual(self.__size, copy(self.__configuration))
-        p = randint(0, self.__size//2)
-        mutated.__configuration[p], mutated.__configuration[self.__size - 1 - p] = \
-            mutated.__configuration[self.__size - 1 - p], mutated.__configuration[p]
-        return mutated
+        if probability > random():
+            mutated = Individual(self.__size, copy(self.__configuration))
+            p = randint(0, self.__size//2)
+            mutated.__configuration[p], mutated.__configuration[self.__size - 1 - p] = \
+                mutated.__configuration[self.__size - 1 - p], mutated.__configuration[p]
+            return mutated
 
     def crossover(self, individ, probability):
         """
@@ -116,6 +117,9 @@ class Individual:
 
     def getConfiguration(self):
         return self.__configuration
+
+    def getFitness(self):
+        return self.__fitness
 
     def __lt__(self, other):
         return self.__fitness < other.__fitness
