@@ -29,8 +29,8 @@ class Population:
         Tournament selection
         :return: two individuals having best fitness from a random sample of 10
         """
-        tournament_size = 4
-        probability = 0.6
+        tournament_size = 3
+        probability = 0.7
         staged_individuals = []
         for i in range(tournament_size):
             random_index = randint(0, len(self.__list_individuals) - 1)

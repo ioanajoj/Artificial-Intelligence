@@ -21,6 +21,7 @@ class Algorithm:
         self.__muation_probability = None
         self.read_paramaters(parameters_file_name)
         self.best_solutions = []
+        self.averages = []
 
     def read_paramaters(self, file_name):
         """
@@ -79,6 +80,7 @@ class Algorithm:
                 print("best solution = " + str(best_solution))
                 self.best_solutions.append(best_solution)
             self.plotGeneration()
+            self.averages.append(self.__population.getAverage())
         self.statistics()
 
     def statistics(self):
@@ -96,9 +98,28 @@ class Algorithm:
         std_deviation = math.sqrt(sum_best // (len(self.best_solutions) - 1))
         print(std_deviation)
 
+        self.plotAvg()
+
     def plotGeneration(self):
+        """
+        Plot average fitnesses after one run
+        :return: void
+        """
         to_plot = self.__fitnesses
-        plt.plot(to_plot)
+        # plt.clf()
+        plt.plot(to_plot, 'g^')
         plt.ylabel('fitness')
         plt.xlabel('individual')
+        plt.show()
+        self.__fitnesses = []
+
+    def plotAvg(self):
+        """
+        Plot final average of every run
+        :return: void
+        """
+        to_plot = self.averages
+        plt.plot(to_plot, 'g^')
+        plt.ylabel('final average')
+        plt.xlabel('run')
         plt.show()
