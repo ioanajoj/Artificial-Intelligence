@@ -1,5 +1,5 @@
 number of runs:30
-number of generations:1000
+number of generations:2000
 alpha:1.9
 beta:0.9
 evaporation coefficient rho:0.05

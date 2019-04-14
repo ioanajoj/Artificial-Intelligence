@@ -112,12 +112,6 @@ class Ant:
         :return: int
         """
         cost = []
-        # for task_index, task_line in enumerate(self.solution):
-        #     machine_cost = 0
-        #     for machine_index, usage_value in enumerate(task_line):
-        #         if usage_value != 0:
-        #             machine_cost += self.problem.cost_matrix[task_index][machine_index]
-        #     cost.append(machine_cost)
         for machine_index in range(self.machines):
             machine_cost = 0
             for task_index, task_line in enumerate(self.solution):
@@ -128,7 +122,7 @@ class Ant:
 
     def show_solution(self):
         """
-        Print the solution somewhat nicely
+        Print the solution 'nicely'
         :return: void
         """
         for task_index, task_line in enumerate(self.solution):

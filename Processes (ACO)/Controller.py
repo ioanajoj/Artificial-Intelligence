@@ -52,7 +52,7 @@ class Controller:
                 ant.add_move(self.pheromone_matrix, self.alpha, self.beta)
 
         # select best ant and spread pheromone from its path
-        bestAnt = max(self.population)
+        bestAnt = min(self.population)
         self.spread_pheromone(bestAnt)
 
         return bestAnt
