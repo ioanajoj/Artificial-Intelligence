@@ -1,6 +1,3 @@
-# https://pdfs.semanticscholar.org/9db4/859ba58dc217a93afcff85fa6697058d3310.pdf
-from random import randint
-
 from Ant import Ant
 from Problem import Problem
 
@@ -8,8 +5,12 @@ from Problem import Problem
 class Controller:
     def __init__(self, data_file, parameters_file):
         """
-        population = List<Ant>
-        trace = matrix
+        Initialize controller
+        • create Problem with path to data_file
+        • self.population = List<Ant>
+        • load parameters from parameters_file
+        • set self.no_steps as number of tasks * number of machines
+        • initialize the pheromone matrix with 1 on all positions
         """
         self.problem = Problem(data_file)
         self.population = []
@@ -20,7 +21,7 @@ class Controller:
         self.rho = 0
         self.load_parameters(parameters_file)
         self.no_steps = self.problem.tasks * self.problem.machines
-        self.pheromone_matrix = [[1for i in range(self.problem.machines)] for j in range(self.problem.tasks)]
+        self.pheromone_matrix = [[1 for j in range(self.problem.machines)] for i in range(self.problem.tasks)]
 
     def load_parameters(self, parameters_file):
         with open(parameters_file, 'r') as file:
@@ -50,12 +51,18 @@ class Controller:
             for ant in self.population:
                 ant.add_move(self.pheromone_matrix, self.alpha, self.beta)
 
+        # select best ant and spread pheromone from its path
         bestAnt = max(self.population)
         self.spread_pheromone(bestAnt)
 
         return bestAnt
 
     def spread_pheromone(self, ant):
+        """
+        Update self.pheromone_matrix with the path followed by given ant
+        :param ant: Ant
+        :return: void
+        """
         pheromone_increase = 1.0 / ant.fitness()
         for task_index, task_line in enumerate(ant.solution):
             for machine_index, usage_value in enumerate(task_line):
@@ -64,7 +71,7 @@ class Controller:
 
     def runAlgorithm(self):
         """
-
+        Given a number of generations, run iterations and find the fittest ant
         :return: solution?
         """
         best_ant_fitness = 10000
@@ -79,9 +86,10 @@ class Controller:
         return best_ant_global
 
     def evaporation(self):
+        """
+        Diminish the pheromone level with the coefficient self.rho
+        :return:
+        """
         for task_index, task_line in enumerate(self.pheromone_matrix):
             for machine_index, usage_value in enumerate(task_line):
                 self.pheromone_matrix[task_index][machine_index] *= (1 - self.rho)
-
-    def loadParameters(self):
-        pass
