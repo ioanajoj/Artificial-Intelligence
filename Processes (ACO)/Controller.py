@@ -76,20 +76,26 @@ class Controller:
         Given a number of generations, run iterations and find the fittest ant
         :return: solution?
         """
-        best_ants = []
-        for i in range(self.no_runs):
-            best_ant_fitness = 10000
-            best_ant_global = None
-            for i in range(self.no_generations):
-                best_ant = self.iteration()
-                if best_ant.fitness() < best_ant_fitness:
-                    best_ant_global = best_ant
-                    best_ant_fitness = best_ant.fitness()
-                self.evaporation()
-                self.population = []
-            # return best_ant_global
-            best_ants.append(best_ant_global.fitness())
-        self.plot_runs(best_ants)
+        average_fitness = []
+        # best_ants = []
+        # for i in range(self.no_runs):
+        best_ant_fitness = 10000
+        best_ant_global = None
+        for i in range(self.no_generations):
+            best_ant = self.iteration()
+            if best_ant.fitness() < best_ant_fitness:
+                best_ant_global = best_ant
+                best_ant_fitness = best_ant.fitness()
+            self.evaporation()
+            average = self.get_average_fitness()
+            average_fitness.append(average)
+            self.population = []
+        self.plot_runs(average_fitness)
+        return best_ant_global
+        # best_ants.append(best_ant_global.fitness())
+
+    def get_average_fitness(self):
+        return sum(ant.fitness() for ant in self.population) / len(self.population)
 
     def plot_runs(self, best_ants):
         plt.plot(best_ants, 'g^')
