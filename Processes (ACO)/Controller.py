@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from Ant import Ant
 from Problem import Problem
 
@@ -52,10 +54,10 @@ class Controller:
                 ant.add_move(self.pheromone_matrix, self.alpha, self.beta)
 
         # select best ant and spread pheromone from its path
-        bestAnt = min(self.population)
-        self.spread_pheromone(bestAnt)
+        best_ant = min(self.population)
+        self.spread_pheromone(best_ant)
 
-        return bestAnt
+        return best_ant
 
     def spread_pheromone(self, ant):
         """
@@ -74,16 +76,26 @@ class Controller:
         Given a number of generations, run iterations and find the fittest ant
         :return: solution?
         """
-        best_ant_fitness = 10000
-        best_ant_global = None
-        for i in range(self.no_generations):
-            best_ant = self.iteration()
-            if best_ant.fitness() < best_ant_fitness:
-                best_ant_global = best_ant
-                best_ant_fitness = best_ant.fitness()
-            self.evaporation()
-            self.population = []
-        return best_ant_global
+        best_ants = []
+        for i in range(self.no_runs):
+            best_ant_fitness = 10000
+            best_ant_global = None
+            for i in range(self.no_generations):
+                best_ant = self.iteration()
+                if best_ant.fitness() < best_ant_fitness:
+                    best_ant_global = best_ant
+                    best_ant_fitness = best_ant.fitness()
+                self.evaporation()
+                self.population = []
+            # return best_ant_global
+            best_ants.append(best_ant_global.fitness())
+        self.plot_runs(best_ants)
+
+    def plot_runs(self, best_ants):
+        plt.plot(best_ants, 'g^')
+        plt.ylabel('fitness')
+        plt.xlabel('best ant')
+        plt.show()
 
     def evaporation(self):
         """
